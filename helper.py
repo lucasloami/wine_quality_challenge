@@ -1,5 +1,13 @@
 # HELPER FUNCTION DEFINITIONS
 
+from __future__ import division
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import tree
+from sklearn.model_selection import validation_curve
+
 def plot_learning_curve(title, X, y, ylim=None, cv=None, n_jobs=1, 
                         train_sizes=np.linspace(.1, 1.0, 5), max_depths=None, subset=False):
   fig = plt.figure(figsize=(12,7))
