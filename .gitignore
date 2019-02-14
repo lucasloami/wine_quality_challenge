@@ -138,4 +138,6 @@ dmypy.json
 ### Python Patch ###
 .venv/
 
+*.csv
+
 # End of https://www.gitignore.io/api/python,jupyternotebook,jupyternotebooks
