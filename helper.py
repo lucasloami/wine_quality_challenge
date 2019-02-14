@@ -5,11 +5,14 @@ from __future__ import division
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import itertools
 from sklearn import tree
-from sklearn.model_selection import validation_curve
+from sklearn.model_selection import validation_curve, learning_curve
+from sklearn.metrics import roc_curve, auc
 
 def plot_learning_curve(title, X, y, ylim=None, cv=None, n_jobs=1, 
-                        train_sizes=np.linspace(.1, 1.0, 5), max_depths=None, subset=False):
+                        train_sizes=np.linspace(.1, 1.0, 5), max_depths=None, subset=False,
+                        scoring_metric='accuracy'):
   fig = plt.figure(figsize=(12,7))
 
   if max_depths is None:
@@ -28,7 +31,7 @@ def plot_learning_curve(title, X, y, ylim=None, cv=None, n_jobs=1,
     train_sizes, train_scores, test_scores = learning_curve(estimator, X, y,
                                                           cv=cv, n_jobs=n_jobs, 
                                                           train_sizes=train_sizes,
-                                                           scoring='accuracy')
+                                                           scoring=scoring_metric)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
@@ -93,12 +96,12 @@ def plot_model_complexity(X, y):
   plt.legend(loc = 'lower right')
   plt.xlabel('Maximum Depth')
   plt.ylabel('Score')
-  plt.ylim([0.87,0.99])
+  plt.ylim([0.4,0.99])
   plt.show()
 
 def plot_roc_curve(y_true, y_pred, n_classes=1):
   # Determine the false positive and true positive rates
-  fpr, tpr, _ = roc_curve(y_test, y_pred)
+  fpr, tpr, _ = roc_curve(y_true, y_pred)
 
   # Calculate the AUC
   roc_auc = auc(fpr, tpr)
@@ -114,3 +117,26 @@ def plot_roc_curve(y_true, y_pred, n_classes=1):
   plt.title('ROC Curve')
   plt.legend(loc="lower right")
   plt.show()
+
+
+def plot_confusion_matrix(cm, classes,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+    fmt = 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.tight_layout()
+    plt.show()
